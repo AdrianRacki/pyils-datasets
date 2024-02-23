@@ -1,0 +1,14 @@
+# Poetry
+# https://python-poetry.org/docs/pyproject/
+
+[tool.poetry]
+name = "pyils-datasets"
+version = "0.1.0"
+description = ""
+authors = []
+packages = [
+  { include = "**/*.py" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
