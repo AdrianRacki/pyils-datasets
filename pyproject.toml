@@ -14,4 +14,5 @@ packages = [
 python = "^3.12"
 
 [tool.poetry.group.lint.dependencies]
+mypy = "^1.8.0"
 ruff = "^0.2.2"
