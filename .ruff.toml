@@ -1,0 +1,9 @@
+# Ruff
+# https://docs.astral.sh/ruff/configuration/
+# https://docs.astral.sh/ruff/rules/
+# https://docs.astral.sh/ruff/settings/
+
+target-version = "py311"
+
+[lint]
+select = ["F", "E", "W", "I"]
