@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Literal, NamedTuple, Self
+from typing import Literal, NamedTuple, Self, cast, get_args
 
 __all__: list[str] = ["Dataset"]
 
@@ -35,40 +35,31 @@ class Dataset:
 
     @classmethod
     def from_text(cls, text: str) -> Self:
-        """Convert a text representing a single dataset into the `Dataset` instance.
+        """Convert a text representing a single dataset into the `Dataset` instance."""
 
-        Args:
-            text (str): String with specific pattern in which each row is separated
-                by "\n"
-
-        Raises:
-            Exception: Input text does not have enough rows to assign values to
-                all attributes of the Dataset class.
-
-        Returns:
-            Self: Returns Dataset class object with data imported from input text.
-        """
-        if text.find("*") != -1:
+        typesL = Literal["density", "viscosity", "surften"]
+        text_list = text.split("\n")
+        if len(text_list) < 6:
+            raise ValueError(
+                f"Text has too few rows. Expected >6, got {len(text_list)}"
+            )
+        if text_list[0][-1] == "*":
             accepted = False
             text = text.replace("*", "")
         else:
             accepted = True
-        text_list = text.split("\n")
-        if len(text_list) < 6:
-            raise Exception(f"Text has too few rows. Expected >6, got {len(text_list)}")
-        elif len(text_list) < 7:
-            print("Warning: No data to import! Check input.")
         type = (text_list[0].split(":"))[1].strip()
-        if type not in ("density", "viscosity", "surften"):
+        type = cast(typesL, type)
+        if type not in list(get_args(typesL)):
             raise ValueError(
                 f"Invalid 'type' value: {type}. "
                 f"Expected one of 'density', 'viscosity', 'surften'."
             )
         reference = text_list[1]
         ionic_liquid = text_list[4]
-        try:
+        if (text_list[5].split(";"))[1].isdigit():
             water_content_ppm = int((text_list[5].split(";"))[1])
-        except:  # noqa: E722
+        else:
             water_content_ppm = None
         details = DatasetDetails(
             measurement_method=(text_list[5].split(";"))[0],
@@ -79,7 +70,7 @@ class Dataset:
         data = []
         for row in text_list[6:]:
             row_values = list(map(float, row.split(" ")))
-            dp = DataPoint(*row_values)
+            dp = DataPoint(row_values[0], row_values[1], row_values[2])
             data.append(dp)
         return cls(
             type=type,
