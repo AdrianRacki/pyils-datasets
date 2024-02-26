@@ -1,0 +1,4 @@
+[report]
+branch = True
+omit =
+  *_test.py

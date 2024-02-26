@@ -3,4 +3,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .vscode/
+.coverage
+coverage.xml
 node_modules/
