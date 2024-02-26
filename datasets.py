@@ -29,7 +29,7 @@ class Dataset:
     type: Literal["density", "viscosity", "surften"]
     accepted: bool
     reference: str
-    ionic_liquid: list[str]
+    ionic_liquid: str
     details: DatasetDetails
     data: list[DataPoint]
 
