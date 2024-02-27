@@ -73,3 +73,10 @@ class Dataset:
             dp = DataPoint(row_values[0], row_values[1], row_values[2])
             data.append(dp)
         return cls(type_, accepted, reference, ionic_liquid, details, data)
+
+    @classmethod
+    def from_file(cls, file_path: str) -> list[Self]:
+        """Convert a file containing multiple datasets into a list of `Dataset`
+        instances.
+        """
+        raise NotImplementedError
