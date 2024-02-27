@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Literal, NamedTuple, Self, cast, get_args
 
 __all__: list[str] = ["Dataset"]
+TDatasetType = Literal["density", "viscosity", "surften"]
 
 
 @dataclass
@@ -37,7 +38,6 @@ class Dataset:
     def from_text(cls, text: str) -> Self:
         """Convert a text representing a single dataset into the `Dataset` instance."""
 
-        typesL = Literal["density", "viscosity", "surften"]
         text_list = text.split("\n")
         if len(text_list) < 6:
             raise ValueError(
@@ -48,11 +48,11 @@ class Dataset:
             text = text.replace("*", "")
         else:
             accepted = True
-        type = (text_list[0].split(":"))[1].strip()
-        type = cast(typesL, type)
-        if type not in list(get_args(typesL)):
+        type_ = (text_list[0].split(":"))[1].strip()
+        type_ = cast(TDatasetType, type_)
+        if type_ not in list(get_args(TDatasetType)):
             raise ValueError(
-                f"Invalid 'type' value: {type}. "
+                f"Invalid 'type' value: {type_}. "
                 f"Expected one of 'density', 'viscosity', 'surften'."
             )
         reference = text_list[1]
@@ -72,11 +72,4 @@ class Dataset:
             row_values = list(map(float, row.split(" ")))
             dp = DataPoint(row_values[0], row_values[1], row_values[2])
             data.append(dp)
-        return cls(
-            type=type,
-            accepted=accepted,
-            reference=reference,
-            ionic_liquid=ionic_liquid,
-            details=details,
-            data=data,
-        )
+        return cls(type_, accepted, reference, ionic_liquid, details, data)
