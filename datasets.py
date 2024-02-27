@@ -39,13 +39,13 @@ class Dataset:
         """Convert a text representing a single dataset into the `Dataset` instance."""
 
         text_list = text.split("\n")
-        if len(text_list) < 6:
+        if len(text_list) < 7:
             raise ValueError(
-                f"Text has too few rows. Expected >6, got {len(text_list)}"
+                f"Text has too few rows. Expected >7, got {len(text_list)}"
             )
         if text_list[0][-1] == "*":
             accepted = False
-            text = text.replace("*", "")
+            text_list[0] = text_list[0].replace("*", "")
         else:
             accepted = True
         type_ = (text_list[0].split(":"))[1].strip()
