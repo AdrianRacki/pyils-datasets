@@ -34,7 +34,7 @@ As soon as you clone the repo, follow the steps listed below:
 
    ```terminal
    $ pre-commit install
-   $ pre-commit install --hook-type commitmsg
+   $ pre-commit install --hook-type commit-msg
    ```
 
    If some of the hooks are updated, commit and push the updated
