@@ -80,8 +80,8 @@ class Dataset:
         instances.
         """
         with open(file_path, "r") as file:
-            file_data = file.read().split("\n\n")
-        datasets_list = cast(
-            list[Self], [Dataset.from_text(text) for text in file_data]
-        )
+            file_data = [x for x in file.read().split("\n\n") if x != ""]
+            if file_data[-1][-1] == "\n":
+                file_data[-1] = file_data[-1][:-1]
+        datasets_list = [cls.from_text(text) for text in file_data]
         return datasets_list
