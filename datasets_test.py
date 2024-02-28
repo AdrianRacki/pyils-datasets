@@ -1,4 +1,5 @@
 import os
+import random
 
 import pytest
 
@@ -121,12 +122,22 @@ def test_dataset_from_file_reads_and_returns_list_of_datasets_from_file() -> Non
     ]
 
     with open(file_path, "w") as file:
-        file.write("\n\n".join(file_data))
+        delimiters = [
+            "\n\n" * random.randint(1, 3) for _ in range(len(file_data) - 1)
+        ] + ["\n"]
+        file_contents = ""
+
+        for data, delimiter in zip(file_data, delimiters):
+            file_contents += data + delimiter
+        file.write(file_contents)
 
     # Act.
-    datasets = Dataset.from_file(file_path)
-
-    os.remove(file_path)
+    try:
+        datasets = Dataset.from_file(file_path)
+    except Exception as e:
+        raise e
+    finally:
+        os.remove(file_path)
 
     # Assert.
     assert datasets == [
