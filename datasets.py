@@ -79,4 +79,9 @@ class Dataset:
         """Convert a file containing multiple datasets into a list of `Dataset`
         instances.
         """
-        raise NotImplementedError
+        with open(file_path, "r") as file:
+            file_data = file.read().split("\n\n")
+        datasets_list = cast(
+            list[Self], [Dataset.from_text(text) for text in file_data]
+        )
+        return datasets_list
