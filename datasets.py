@@ -39,13 +39,13 @@ class Dataset:
         """Convert a text representing a single dataset into the `Dataset` instance."""
 
         text_list = text.split("\n")
-        if len(text_list) < 6:
+        if len(text_list) < 7:
             raise ValueError(
-                f"Text has too few rows. Expected >6, got {len(text_list)}"
+                f"Text has too few rows. Expected >7, got {len(text_list)}"
             )
         if text_list[0][-1] == "*":
             accepted = False
-            text = text.replace("*", "")
+            text_list[0] = text_list[0].replace("*", "")
         else:
             accepted = True
         type_ = (text_list[0].split(":"))[1].strip()
@@ -73,3 +73,15 @@ class Dataset:
             dp = DataPoint(row_values[0], row_values[1], row_values[2])
             data.append(dp)
         return cls(type_, accepted, reference, ionic_liquid, details, data)
+
+    @classmethod
+    def from_file(cls, file_path: str) -> list[Self]:
+        """Convert a file containing multiple datasets into a list of `Dataset`
+        instances.
+        """
+        with open(file_path, "r") as file:
+            file_data = [x for x in file.read().split("\n\n") if x != ""]
+            if file_data[-1][-1] == "\n":
+                file_data[-1] = file_data[-1][:-1]
+        datasets_list = [cls.from_text(text) for text in file_data]
+        return datasets_list
