@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Literal, NamedTuple, Self, cast, get_args
 
 __all__: list[str] = ["Dataset"]
@@ -87,5 +87,7 @@ class Dataset:
         return datasets_list
 
     @classmethod
-    def to_dict(cls, dataset: Self) -> None:
-        pass
+    def to_dict(cls, dataset: Self) -> dict:
+        ds_dict = asdict(dataset)
+        ds_dict["data"] = [x._asdict() for x in ds_dict["data"]]
+        return ds_dict

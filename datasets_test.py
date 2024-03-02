@@ -1,8 +1,6 @@
 import os
 import random
 
-import pytest
-
 from datasets import Dataset, DatasetDetails
 
 
@@ -146,8 +144,8 @@ def test_dataset_from_file_reads_and_returns_list_of_datasets_from_file() -> Non
     ]
 
 
-@pytest.mark.xfail(reason="Not implemented yet.")
 def test_dataset_to_dict_returns_dict_from_dataset() -> None:
+    # Arrange
     text = """
     dataset:density
     kanakubo-2015
