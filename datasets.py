@@ -85,3 +85,7 @@ class Dataset:
                 file_data[-1] = file_data[-1][:-1]
         datasets_list = [cls.from_text(text) for text in file_data]
         return datasets_list
+
+    @classmethod
+    def to_json(cls, instance: Self, file_path: str) -> None:
+        pass
