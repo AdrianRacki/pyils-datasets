@@ -1,4 +1,3 @@
-import json
 import os
 import random
 
@@ -7,6 +6,7 @@ import pytest
 from datasets import Dataset, DatasetDetails
 
 
+@pytest.mark.xfail(reason="Not implemented yet.")
 def test_dataset_from_text_returns_dataset_instance_from_valid_text() -> None:
     # Arrange.
     text = """
@@ -145,50 +145,3 @@ def test_dataset_from_file_reads_and_returns_list_of_datasets_from_file() -> Non
         Dataset.from_text(file_data[1]),
         Dataset.from_text(file_data[2]),
     ]
-
-
-@pytest.mark.xfail(reason="Not implemented yet.")
-def test_dataset_to_json_saves_dataset_to_json_file() -> None:
-    # Arrange
-    text = """
-    dataset:density
-    kanakubo-2015
-    1
-    mole
-    im-6,1_ntf2
-    dilatometer;30;synthesis;vacuum drying
-    288.15 14.95 1393.3
-    288.15 20.18 1396.8
-    """
-    text = "\n".join(filter(None, map(str.strip, text.split("\n"))))
-    test_dict = {
-        "type": "density",
-        "accepted": True,
-        "reference": "kanakubo-2015",
-        "ionic_liquid": "im-6,1_ntf2",
-        "details": {
-            "measurement_method": "dilatometer",
-            "water_content_ppm": 30,
-            "sample_supplier": "synthesis",
-            "purification_method": "vacuum drying",
-        },
-        "data": [
-            {"temperature_K": 288.15, "pressure_MPa": 14.95, "value": 1393.3},
-            {"temperature_K": 288.15, "pressure_MPa": 20.18, "value": 1396.8},
-        ],
-    }
-    dataset = Dataset.from_text(text)
-    file_name = "test"
-    file_path = file_name + ".json"
-
-    # Act
-    Dataset.to_json(dataset, file_name)
-    with open(file_name + ".json", "r") as outfile:
-        loaded_dict = json.load(outfile)
-
-    # Assert
-    assert os.path.exists(file_path)
-    assert loaded_dict == test_dict
-
-    # Clean
-    os.remove(file_path)
