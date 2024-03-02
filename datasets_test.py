@@ -6,7 +6,6 @@ import pytest
 from datasets import Dataset, DatasetDetails
 
 
-@pytest.mark.xfail(reason="Not implemented yet.")
 def test_dataset_from_text_returns_dataset_instance_from_valid_text() -> None:
     # Arrange.
     text = """
@@ -145,3 +144,41 @@ def test_dataset_from_file_reads_and_returns_list_of_datasets_from_file() -> Non
         Dataset.from_text(file_data[1]),
         Dataset.from_text(file_data[2]),
     ]
+
+
+@pytest.mark.xfail(reason="Not implemented yet.")
+def test_dataset_to_dict_returns_dict_from_dataset() -> None:
+    text = """
+    dataset:density
+    kanakubo-2015
+    1
+    mole
+    im-6,1_ntf2
+    dilatometer;30;synthesis;vacuum drying
+    288.15 14.95 1393.3
+    288.15 20.18 1396.8
+    """
+    test_dict = {
+        "type": "density",
+        "accepted": True,
+        "reference": "kanakubo-2015",
+        "ionic_liquid": "im-6,1_ntf2",
+        "details": {
+            "measurement_method": "dilatometer",
+            "water_content_ppm": 30,
+            "sample_supplier": "synthesis",
+            "purification_method": "vacuum drying",
+        },
+        "data": [
+            {"temperature_K": 288.15, "pressure_MPa": 14.95, "value": 1393.3},
+            {"temperature_K": 288.15, "pressure_MPa": 20.18, "value": 1396.8},
+        ],
+    }
+    text = "\n".join(filter(None, map(str.strip, text.split("\n"))))
+    dataset = Dataset.from_text(text)
+
+    # Act
+    dataset_dict = Dataset.to_dict(dataset)
+
+    # Assert
+    assert dataset_dict == test_dict
