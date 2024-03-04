@@ -1,6 +1,8 @@
 import os
 import random
 
+import pytest
+
 from datasets import Dataset, DatasetDetails
 
 
@@ -56,6 +58,78 @@ def test_dataset_from_text_returns_dataset_instance_from_valid_text() -> None:
         (288.16, 150.5, 1465.0),
         (288.15, 174.6, 1474.9),
     ]
+
+
+def test_dataset_from_text_raises_value_error_when_data_are_not_found() -> None:
+    # Arrange.
+    text = """
+    dataset:density
+    kanakubo-2015
+    1
+    mole
+    im-6,1_ntf2
+    dilatometer;30;synthesis;vacuum drying
+    """
+
+    # Prepare raw text for parsing.
+    text = "\n".join(filter(None, map(str.strip, text.split("\n"))))
+
+    # Assert.
+    with pytest.raises(ValueError):
+        Dataset.from_text(text)
+
+
+def test_dataset_from_text_raises_value_error_when_data_has_wrong_type() -> None:
+    # Arrange.
+    text = """
+    dataset:densiity
+    kanakubo-2015
+    1
+    mole
+    im-6,1_ntf2
+    dilatometer;30;synthesis;vacuum drying
+    288.15 14.95 1393.3
+    288.15 20.18 1396.8
+    """
+
+    # Prepare raw text for parsing.
+    text = "\n".join(filter(None, map(str.strip, text.split("\n"))))
+
+    # Assert.
+    with pytest.raises(ValueError):
+        Dataset.from_text(text)
+
+
+def test_dataset_from_text_returns_dataset_from_text_with_asterisk() -> None:
+    # Arrange.
+    text = """
+    dataset:density*
+    kanakubo-2015
+    1
+    mole
+    im-6,1_ntf2
+    dilatometer;not stated;synthesis;vacuum drying
+    288.15 14.95 1393.3
+    """
+
+    # Prepare raw text for parsing.
+    text = "\n".join(filter(None, map(str.strip, text.split("\n"))))
+
+    # Act.
+    dataset = Dataset.from_text(text)
+
+    # Assert.
+    assert dataset.type == "density"
+    assert dataset.accepted is False
+    assert dataset.reference == "kanakubo-2015"
+    assert dataset.ionic_liquid == "im-6,1_ntf2"
+    assert dataset.details == DatasetDetails(
+        measurement_method="dilatometer",
+        water_content_ppm=None,
+        sample_supplier="synthesis",
+        purification_method="vacuum drying",
+    )
+    assert dataset.data == [(288.15, 14.95, 1393.3)]
 
 
 def test_dataset_from_file_reads_and_returns_list_of_datasets_from_file() -> None:
