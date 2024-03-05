@@ -83,8 +83,14 @@ class Dataset:
             file_data = [x for x in file.read().split("\n\n") if x != ""]
             if file_data[-1][-1] == "\n":
                 file_data[-1] = file_data[-1][:-1]
-        datasets_list = [cls.from_text(text) for text in file_data]
-        return datasets_list
+        datasets_collector: list[Self] = []
+        for text in file_data:
+            try:
+                datasets_list = cls.from_text(text)
+                datasets_collector.append(datasets_list)
+            except Exception as e:
+                print(f"Skipping dataset due to following error: {str(e)}")
+        return datasets_collector
 
     @classmethod
     def to_dict(cls, dataset: Self) -> dict:
